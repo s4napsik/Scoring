@@ -9,3 +9,4 @@ mlruns
 *.csv
 *.pickle
 *.pkl
+*.json
