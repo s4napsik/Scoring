@@ -1,7 +1,10 @@
+import os
+
 import pandas as pd
 from dotenv import load_dotenv
-import os
 from sqlalchemy import create_engine
+from sqlalchemy.dialects.mysql import insert
+
 # Загрузка переменных окружения из файла .env
 load_dotenv()
 
@@ -18,9 +21,17 @@ DATABASE_URL = f"postgresql+psycopg2://{PG_LOGIN}:{PG_PASS}@{HOST}:{DB_PORT}/{PG
 # Создание SQLAlchemy Engine
 engine = create_engine(DATABASE_URL)
 
+query = """
+    SELECT table_name 
+    FROM information_schema.tables 
+    WHERE table_schema = 'dwh' AND table_type = 'BASE TABLE'
+"""
+
 # Пример: Чтение данных из таблицы в Pandas DataFrame
-try:
-    df = pd.read_sql("SELECT * FROM prod.my_table;", engine)
-    print(df.head())
-except Exception as e:
-    print(f"Error reading data: {e}")
+def connection(table: str) -> pd.DataFrame:
+    df = pd.read_sql(f"SELECT * FROM {table}", engine)
+    return df
+
+def all_tables() -> pd.DataFrame:
+    df_tables = pd.read_sql(query, engine)
+    return df_tables
