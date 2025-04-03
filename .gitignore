@@ -10,3 +10,4 @@ mlruns
 *.pickle
 *.pkl
 *.json
+.DS_Store

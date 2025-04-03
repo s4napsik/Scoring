@@ -16,7 +16,7 @@ PG_LOGIN = os.getenv("PG_LOGIN")
 PG_PASS = os.getenv("PG_PASS")
 
 # Формирование строки подключения через SQLAlchemy
-DATABASE_URL = f"postgresql+psycopg2://{PG_LOGIN}:{PG_PASS}@{HOST}:{DB_PORT}/{PG_DB}"
+DATABASE_URL = f"postgresql+psycopg2://{PG_LOGIN}:{PG_PASS}@{HOST}:{DB_PORT}/{PG_DB}?client_encoding=utf8"
 
 # Создание SQLAlchemy Engine
 engine = create_engine(DATABASE_URL)
@@ -29,7 +29,8 @@ query = """
 
 # Пример: Чтение данных из таблицы в Pandas DataFrame
 def connection(table: str) -> pd.DataFrame:
-    df = pd.read_sql(f"SELECT * FROM {table}", engine)
+    df = pd.read_sql(f"SELECT * FROM {table}", engine, encoding='latin1')
+    df = df.applymap(lambda x: x.decode('latin1').encode('utf-8') if isinstance(x, bytes) else x)
     return df
 
 def all_tables() -> pd.DataFrame:
