@@ -3,7 +3,6 @@ import os
 import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.dialects.mysql import insert
 
 # Загрузка переменных окружения из файла .env
 load_dotenv()
@@ -29,7 +28,7 @@ query = """
 
 # Пример: Чтение данных из таблицы в Pandas DataFrame
 def connection(table: str) -> pd.DataFrame:
-    df = pd.read_sql(f"SELECT * FROM {table}", engine, encoding='latin1')
+    df = pd.read_sql(f"SELECT * FROM {table}", engine)
     df = df.applymap(lambda x: x.decode('latin1').encode('utf-8') if isinstance(x, bytes) else x)
     return df
 
